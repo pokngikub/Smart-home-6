@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌈 Ultimate Rainbow Galaxy IoT Dashboard 🚀</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            /* ชุดสีรุ้งระดับซูเปอร์พรีเมียม */
+            --rainbow-grad: linear-gradient(45deg, #ff0055, #ff5500, #ffcc00, #00ff55, #00ccff, #7700ff, #ff0055);
+            --rainbow-bg: linear-gradient(-45deg, #3a1c40, #5d143c, #16365c, #0d4734, #4a3b12, #2d164d);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
+
+        /* 🌈 พิ้นหลังสีรุ้งเคลื่อนไหวแอนิเมชันแบบอลังการ 🌈 */
+        body {
+            background: linear-gradient(-45deg, #ff3366, #ff6633, #ffcc33, #33ff66, #33ccff, #9933ff, #ff3366);
+            background-size: 400% 400%;
+            animation: cosmicRainbow 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* เอฟเฟกต์คลื่นสีรุ้งขยับเยื้อนดั่งดาราจักร */
+        @keyframes cosmicRainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* เพิ่ม Overlay เลเยอร์สาดแสงข้ามมิติ */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(0, 0, 0, 0.3) 0%, transparent 60%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative; z-index: 10; width: 100%; max-width: 1000px;
+        }
+
+        .header {
+            text-align: center; margin-bottom: 35px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            position: relative;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: 3rem; font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255,255,255,0.6), 0 0 30px rgba(0,0,0,0.5);
+            text-transform: uppercase; letter-spacing: 4px;
+        }
+
+        /* Grid Layout สำหรับการ์ดคอนโทรล */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        /* การ์ดกระจกแก้ว (Glassmorphism) สไตล์ล้ำยุค */
+        .led-card {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 30px;
+            padding: 30px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3), inset 0 0 15px rgba(255,255,255,0.05);
+        }
+
+        .led-card:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            background: rgba(0, 0, 0, 0.55);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        /* การ์ดที่ 6 (Master Switch) คุมทั้งบ้าน */
+        .led-card.master-card {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .led-card.master-card:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .led-icon {
+            font-size: 3.5rem; color: rgba(255, 255, 255, 0.25); margin-bottom: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .room-name { color: #fff; font-size: 1.5rem; font-weight: 600; margin-bottom: 12px; text-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+
+        /* 💡 ระบบสีนีออนแยกตามห้องเมื่อเปิดไฟ (ON) */
+        .on .led-icon { transform: scale(1.15); color: #fff; }
+        .on#card1 .led-icon { text-shadow: 0 0 30px #ff0055, 0 0 50px #ff0055; color: #ff0055; }
+        .on#card2 .led-icon { text-shadow: 0 0 30px #00ffff, 0 0 50px #00ffff; color: #00ffff; }
+        .on#card3 .led-icon { text-shadow: 0 0 30px #ff9900, 0 0 50px #ff9900; color: #ff9900; }
+        .on#card4 .led-icon { text-shadow: 0 0 30px #cc00ff, 0 0 50px #cc00ff; color: #cc00ff; }
+        .on#card5 .led-icon { text-shadow: 0 0 30px #66ff00, 0 0 50px #66ff00; color: #66ff00; }
+        
+        /* สัญลักษณ์ดวงดาวหมุนรอบการ์ดมาสเตอร์ */
+        .on.master-card .led-icon { 
+            color: #ffffff;
+            animation: spinGalaxy 6s linear infinite;
+            filter: drop-shadow(0 0 20px #fff);
+        }
+        @keyframes spinGalaxy { from { transform: rotate(0deg) scale(1.15); } to { transform: rotate(360deg) scale(1.15); } }
+
+        /* สวิตช์ปุ่มกดเนียนตา */
+        .switch {
+            position: relative; width: 110px; height: 50px;
+            appearance: none; background: rgba(0, 0, 0, 0.6); border-radius: 30px;
+            cursor: pointer; transition: 0.4s; border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.5);
+        }
+
+        .switch::before {
+            content: ''; position: absolute; width: 40px; height: 40px;
+            border-radius: 50%; top: 3px; left: 4px; background: #888;
+            transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.4);
+        }
+
+        /* เมื่อเปิดสวิตช์ ให้สวิตช์เป็นแถบสีรุ้งด้วย */
+        .switch:checked { 
+            background: var(--rainbow-grad); background-size: 300%; 
+            animation: cosmicRainbow 4s linear infinite;
+            border-color: rgba(255,255,255,0.6);
+        }
+        .switch:checked::before { transform: translateX(58px); background: #ffffff; }
+
+        /* ปรับสวิตช์มาสเตอร์ใหญ่พิเศษ */
+        .master-switch { width: 220px; height: 65px; border-radius: 40px; }
+        .master-switch::before { width: 53px; height: 53px; top: 4px; left: 5px; }
+        .master-switch:checked::before { transform: translateX(152px); }
+
+        .status-label { margin-top: 15px; font-size: 0.9rem; color: #ddd; font-weight: 400; letter-spacing: 1px; }
+        .on .status-label { color: #fff; font-weight: 600; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>RAINBOW GALAXY HOME</h1>
+            <p style="color: #fff; letter-spacing: 3px; font-size: 0.85rem; opacity: 0.9; font-weight: 300;">ULTIMATE REALTIME SMART CONTROL</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="led-card" id="card1">
+                <i class="fa-solid fa-bed led-icon"></i>
+                <div class="room-name">ห้องนอน</div>
+                <input type="checkbox" class="switch" id="btn1">
+                <div class="status-label" id="label1">OFF</div>
+            </div>
+
+            <div class="led-card" id="card2">
+                <i class="fa-solid fa-bath led-icon"></i>
+                <div class="room-name">ห้องน้ำ</div>
+                <input type="checkbox" class="switch" id="btn2">
+                <div class="status-label" id="label2">OFF</div>
+            </div>
+
+            <div class="led-card" id="card3">
+                <i class="fa-solid fa-couch led-icon"></i>
+                <div class="room-name">ห้องรับแขก</div>
+                <input type="checkbox" class="switch" id="btn3">
+                <div class="status-label" id="label3">OFF</div>
+            </div>
+
+            <div class="led-card" id="card4">
+                <i class="fa-solid fa-utensils led-icon"></i>
+                <div class="room-name">ห้องครัว</div>
+                <input type="checkbox" class="switch" id="btn4">
+                <div class="status-label" id="label4">OFF</div>
+            </div>
+
+            <div class="led-card" id="card5">
+                <i class="fa-solid fa-house-chimney-window led-icon"></i>
+                <div class="room-name">หน้าบ้าน</div>
+                <input type="checkbox" class="switch" id="btn5">
+                <div class="status-label" id="label5">OFF</div>
+            </div>
+
+            <div class="led-card master-card" id="card6">
+                <i class="fa-solid fa-wand-magic-sparkles led-icon"></i>
+                <div class="room-name">ควบคุมทั้งหมดในบ้าน</div>
+                <input type="checkbox" class="switch master-switch" id="btn6">
+                <div class="status-label" id="label6">เปิดหมด / ดับหมด</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase Config (ของคุณที่ผูกไว้)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwSsgWOtZO9ii2T_AQ-11Y01xqSTbDyZI",
+            authDomain: "iot1-c0d5b.firebaseapp.com",
+            databaseURL: "https://iot1-c0d5b-default-rtdb.firebaseio.com",
+            projectId: "iot1-c0d5b",
+            storageBucket: "iot1-c0d5b.firebasestorage.app",
+            messagingSenderId: "35177805331",
+            appId: "1:35177805331:web:a333050ff8c6e68246f1e6",
+            measurementId: "G-Y25FXFLHP5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const docRef = doc(db, "IoT1", "device1");
+
+        let ledStates = { led1: 0, led2: 0, led3: 0, led4: 0, led5: 0 };
+
+        // Realtime ดึงข้อมูลมาอัปเดตหน้าจอทันทีที่มีการเปลี่ยนแปลง
+        onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                for(let i=1; i<=5; i++) {
+                    const val = Number(data[`led${i}`]) || 0;
+                    ledStates[`led${i}`] = val;
+                    updateUI(i, val);
+                }
+                updateMasterUI();
+            }
+        });
+
+        // อัปเดตหน้าตาห้องนอน - หน้าบ้าน
+        function updateUI(id, state) {
+            const card = document.getElementById(`card${id}`);
+            const btn = document.getElementById(`btn${id}`);
+            const label = document.getElementById(`label${id}`);
+            
+            if (state === 1) {
+                card.classList.add("on");
+                btn.checked = true;
+                label.innerText = "เปิดใช้งาน (1)";
+            } else {
+                card.classList.remove("on");
+                btn.checked = false;
+                label.innerText = "ปิดใช้งาน (0)";
+            }
+        }
+
+        // อัปเดตหน้าตาปุ่มคุมทั้งหมด
+        function updateMasterUI() {
+            const masterBtn = document.getElementById("btn6");
+            const masterCard = document.getElementById("card6");
+            const anyOn = Object.values(ledStates).some(s => s === 1);
+            
+            masterBtn.checked = anyOn;
+            if (anyOn) {
+                masterCard.classList.add("on");
+            } else {
+                masterCard.classList.remove("on");
+            }
+        }
+
+        // สั่งอัปเดตเฉพาะดวง
+        async function toggleLed(id) {
+            const nextState = ledStates[`led${id}`] === 1 ? 0 : 1;
+            await updateDoc(docRef, { [`led${id}`]: nextState });
+        }
+
+        // สั่ง Master (ถ้ามีเปิดอยู่ให้กดดับหมด ถ้าปิดอยู่ให้เปิดหมด)
+        async function toggleAll() {
+            const anyOn = Object.values(ledStates).some(s => s === 1);
+            const newState = anyOn ? 0 : 1;
+            await updateDoc(docRef, {
+                led1: newState, led2: newState, led3: newState, led4: newState, led5: newState
+            });
+        }
+
+        // ผูกความบันเทิงเข้ากับปุ่มกด
+        for(let i=1; i<=5; i++) {
+            document.getElementById(`btn${i}`).addEventListener("click", (e) => {
+                e.preventDefault();
+                toggleLed(i);
+            });
+        }
+
+        document.getElementById("btn6").addEventListener("click", (e) => {
+            e.preventDefault();
+            toggleAll();
+        });
+
+    </script>
+</body>
+</html>
